@@ -2,3 +2,6 @@ fastapi[all]
 pydantic
 pytest
 uvicorn
+google-cloud-dialogflow-cx==1.10.0
+google-auth==2.6.6
+mock==4.0.3
