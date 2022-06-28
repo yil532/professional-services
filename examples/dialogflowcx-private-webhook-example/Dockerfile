@@ -1,27 +1,26 @@
-# Copyright 2022, Google LLC
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#        http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-FROM python:3.8-slim-buster
+# syntax=docker/dockerfile:1
 
-RUN apt-get update && apt-get install -y \
-  build-essential
+# Use the official lightweight Python image.
+# https://hub.docker.com/_/python
+FROM python:3.10-slim
 
-WORKDIR /app
+RUN apt update && apt -y upgrade && apt-get -y install curl gnupg2 software-properties-common
+RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+RUN apt update && apt install terraform
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+COPY . /
 
-COPY . .
+WORKDIR /import
 
-EXPOSE 8081
+# Install production dependencies.
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r dialogflow-cx/requirements.txt
 
-CMD ["uvicorn", "webhook:app", "--host", "0.0.0.0", "--port", "8081"]
+# Run the web service on container startup. Here we use the gunicorn
+# webserver, with one worker process and 8 threads.
+# For environments with multiple CPU cores, increase the number of workers
+# to be equal to the cores available.
+# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
+ENV PYTHONPATH=$PYTHONPATH:/import/dialogflow-cx
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/prism.css') }}">
+    <title>Dialogflow CX Samples</title>
+</head>
+<body>
+   <script src="{{ url_for('static', filename='js/prism.js') }}"></script>
+   <h1>Dialogflow CX Samples</h1>
+   Agent URL: <a href={{ agent_url }}>{{ agent_url }}</a><br>
+   Webhook URL: <a href={{ webhook_url }}>{{ webhook_url }}</a><br>
+   Destroy URL: <a href={{ destroy_url }}>{{ destroy_url }}</a><br>
+
+   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger-cx/bootstrap.js?v=1"></script>
+   <df-messenger
+     df-cx="true"
+     chat-title="sample-agent-693ebeee-ca60-11ec-bffb-9ffdd702fcd5"
+     agent-id= "{{ agent_id }}"
+     language-code="en"
+     expand="true"
+   ></df-messenger>
+
+   <pre><code class="language-python">
+from google.cloud import dialogflowcx_v3
+import google.auth
+
+credentials, project_id = google.auth.default(quota_project_id='{{ project_id }}')
+
+# Create a client
+client = dialogflowcx_v3.IntentsClient(credentials=credentials)
+
+# Initialize request argument(s)
+request = dialogflowcx_v3.ListIntentsRequest(
+    parent="{{ agent_name }}",
+)
+
+# Make the request
+page_result = client.list_intents(request=request)
+
+# Handle the response
+for response in page_result:
+    print(response)
+   </code></pre>
+
+</body>
+</html>
