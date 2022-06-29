@@ -22,4 +22,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["uvicorn", "webhook:app", "--host", "0.0.0.0"]
+CMD exec uvicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
