@@ -2,6 +2,13 @@ fastapi[all]
 pydantic
 pytest
 uvicorn
-google-cloud-dialogflow-cx==1.10.0
-google-auth==2.6.6
 mock==4.0.3
+google-cloud-dialogflow-cx >= 1.10.0
+google-cloud-logging
+google-auth==2.6.0
+pylint==2.12.2
+gunicorn==20.1.0
+Flask==2.0.3
+Flask-Cors==3.0.9
+Flask-RESTful>0.3.8
+python-terraform
