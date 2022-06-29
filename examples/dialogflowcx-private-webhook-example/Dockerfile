@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM python:3.8-slim-buster
+FROM python:3.8-slim
 
 RUN apt-get update && apt-get install -y \
   build-essential
@@ -22,6 +22,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
-
-CMD ["uvicorn", "webhook:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "webhook:app", "--host", "0.0.0.0"]
